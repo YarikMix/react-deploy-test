@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build frontend
-        run: cd react-deploy-test && npm run build
+        run: cd root/react-deploy-test && npm run build
       - name: Copy bundle via ssh
         uses: appleboy/scp-action@v0.1.7
         with:
