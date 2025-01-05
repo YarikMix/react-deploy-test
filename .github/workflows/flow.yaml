@@ -7,26 +7,14 @@ jobs:
     name: deploy test react
     runs-on: ubuntu-latest
     steps:
-      - name: Pull code
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          script: cd /root/react-deploy-test && git pull
+      - uses: actions/checkout@v4
       - name: Build frontend
-        uses: appleboy/ssh-action@master
+        run: cd react-deploy-test && npm run build
+      - name: Copy bundle via ssh
+        uses: appleboy/scp-action@v0.1.7
         with:
-          timeout: 10m
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          script: cd /root/react-deploy-test && npm run dist
-      - name: Build frontend
-        uses: appleboy/ssh-action@master
-        with:
-          timeout: 10m
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          script: rm -rd var/www/dist/ && mv root/react-deploy-test/dist /var/www/
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ai-chat/dist"
+          target: "/var/www/"
