@@ -7,14 +7,34 @@ jobs:
     name: deploy test react
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Build frontend
-        run: cd root/react-deploy-test && npm run build
-      - name: Copy bundle via ssh
-        uses: appleboy/scp-action@v0.1.7
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "ai-chat/dist"
-          target: "/var/www/"
+          node-version: 16
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install deps
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: List build directory contents
+        run: ls -al ./build
+
+      - name: Upload build result
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./build
+
+      - name: Deploy to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > key.pem
+          chmod 400 key.pem
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@5.35.11.224 'rm -rf /root/react-deploy-test/dist/*'
+          scp -o StrictHostKeyChecking=no -i key.pem -r ./build/* ubuntu@5.35.11.224:/root/react-deploy-test/dist/
