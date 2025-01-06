@@ -35,6 +35,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
           echo "$SSH_PRIVATE_KEY" > key.pem
-          chmod 400 key.pem
+          chmod 600 key.pem
           ssh -o StrictHostKeyChecking=no -i key.pem root@5.35.11.224 'rm -rf var/www/dist/*'
           scp -o StrictHostKeyChecking=no -i key.pem -r ./dist/* root@5.35.11.224:/var/www/dist/
