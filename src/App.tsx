@@ -11,6 +11,7 @@ export const App = () => {
 
     return (
         <div>
+            <h1>Hello world</h1>
             <h1>ASDFASDFASDFASD</h1>
             <h1>value = {count}</h1>
             <button onClick={increment}>increment</button>
@@ -22,8 +23,8 @@ export const App = () => {
             </div>
 
             <Routes>
-                <Route path="/about" element={<About />} />
-                <Route path="/welcome" element={<Welcome />} />
+                <Route path="/about" element={<About/>}/>
+                <Route path="/welcome" element={<Welcome/>}/>
             </Routes>
         </div>
     );
